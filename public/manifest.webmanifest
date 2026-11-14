@@ -1,0 +1,10 @@
+{
+  "name": "RollMe",
+  "short_name": "RollMe",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#1d140e",
+  "theme_color": "#1d140e",
+  "start_url": "/",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

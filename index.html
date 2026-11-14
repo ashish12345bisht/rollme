@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#1d140e" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>RollMe</title>
+  </head>
+  <body>
+    <header id="hud">
+      <div class="level">Level <b id="lvl">1</b></div>
+      <div id="tray" aria-label="Balls home"></div>
+      <div class="btns">
+        <button id="calib" title="Recenter tilt" aria-label="Recenter tilt">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5" class="fill"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg>
+        </button>
+        <button id="mute" title="Sound" aria-label="Toggle sound">
+          <svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" class="fill"/><path id="waves" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/><path id="cross" d="M16 9l6 6M22 9l-6 6"/></svg>
+        </button>
+        <button id="restart" title="Restart level" aria-label="Restart level">
+          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 3v5h5"/></svg>
+        </button>
+      </div>
+    </header>
+    <main id="stage"><canvas id="board"></canvas></main>
+
+    <div id="intro" class="overlay">
+      <div class="card">
+        <h1>r<span class="ball"></span>llme</h1>
+        <p>Tilt your phone to roll the steel balls through the maze.</p>
+        <p>Get <b>every ball</b> into the <span class="gold">golden hole</span>. Dark holes send a ball back to the start.</p>
+        <button id="start" class="primary">Start</button>
+        <p class="small" id="note">Hold the phone the way you like — that becomes “level”. Sound on 🔊</p>
+      </div>
+    </div>
+    <div id="win" class="overlay hidden">
+      <div class="card">
+        <h2 id="win-title">Level complete</h2>
+        <p id="win-sub"></p>
+        <button id="next" class="primary">Next level</button>
+      </div>
+    </div>
+    <div id="toast" class="hidden"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

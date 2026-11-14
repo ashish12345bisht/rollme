@@ -1,0 +1,211 @@
+:root {
+  --bg: #1d140e;
+  --ink: #f3e6cf;
+  --muted: #bfa88a;
+  --gold: #e8b84a;
+  --btn: rgba(255, 235, 200, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, #2c1f15, var(--bg) 70%);
+  color: var(--ink);
+  font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+#hud {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 4px;
+}
+
+.level {
+  font-size: 15px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.level b {
+  color: var(--ink);
+  font-size: 18px;
+}
+
+#tray {
+  flex: 1;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+#tray i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(232, 184, 74, 0.55);
+  transition: background 0.3s, transform 0.3s;
+}
+#tray i.on {
+  background: radial-gradient(circle at 35% 30%, #fff, #a9b1bb 45%, #2a2e33);
+  border-color: var(--gold);
+  transform: scale(1.12);
+}
+
+.btns {
+  display: flex;
+  gap: 8px;
+}
+.btns button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--btn);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.btns button:active {
+  background: rgba(255, 235, 200, 0.2);
+}
+.btns svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.btns svg .fill {
+  fill: var(--ink);
+}
+#mute #cross {
+  display: none;
+}
+#mute.off #cross {
+  display: inline;
+}
+#mute.off #waves {
+  display: none;
+}
+
+#stage {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+#board {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(20, 12, 6, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.35s;
+}
+.overlay.hidden,
+#toast.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card {
+  max-width: 340px;
+  text-align: center;
+  background: linear-gradient(160deg, #3a2819, #24180f);
+  border: 1px solid rgba(232, 184, 74, 0.25);
+  border-radius: 22px;
+  padding: 26px 22px 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.card p {
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 10px 0;
+}
+.card b,
+.gold {
+  color: var(--gold);
+}
+.card .small {
+  font-size: 13px;
+  opacity: 0.85;
+}
+h1 {
+  margin: 0 0 8px;
+  font-size: 44px;
+  letter-spacing: 1px;
+  font-weight: 800;
+}
+h1 .ball {
+  display: inline-block;
+  width: 0.62em;
+  height: 0.62em;
+  margin: 0 0.04em;
+  border-radius: 50%;
+  vertical-align: -0.02em;
+  background: radial-gradient(circle at 35% 30%, #fff, #c9d0d8 18%, #8d96a1 50%, #2a2e33);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+}
+h2 {
+  margin: 0 0 6px;
+  color: var(--gold);
+}
+
+button.primary {
+  margin-top: 10px;
+  padding: 13px 40px;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2a1a08;
+  background: linear-gradient(180deg, #f6d27a, #c8902c);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 #7b5618, 0 8px 20px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+button.primary:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #7b5618, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(20, 12, 6, 0.85);
+  color: var(--ink);
+  font-size: 14px;
+  text-align: center;
+  transition: opacity 0.4s;
+}
