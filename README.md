@@ -1,5 +1,7 @@
 # RollMe
 
+**Play it: [rollme.ashishxbisht.in](https://rollme.ashishxbisht.in)** (open it on your phone)
+
 A wooden tilt maze for your phone. Tilt to roll steel balls through the maze, avoid the holes,
 and get every ball into the golden goal. Levels are endless and generated randomly, and the
 mazes get trickier as you go.
