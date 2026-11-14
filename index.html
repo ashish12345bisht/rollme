@@ -15,6 +15,9 @@
       <div class="level">Level <b id="lvl">1</b></div>
       <div id="tray" aria-label="Balls home"></div>
       <div class="btns">
+        <button id="theme" title="Switch look: wooden board / geometry box" aria-label="Switch look">
+          <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="6" cy="9" r="1" class="fill"/><circle cx="18" cy="9" r="1" class="fill"/><circle cx="6" cy="15" r="1" class="fill"/><circle cx="18" cy="15" r="1" class="fill"/><path d="M9 9.5h3v5h3"/></svg>
+        </button>
         <button id="calib" title="Recenter tilt" aria-label="Recenter tilt">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5" class="fill"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg>
         </button>
@@ -32,9 +35,10 @@
       <div class="card">
         <h1>r<span class="ball"></span>llme</h1>
         <p>Tilt your phone to roll the steel balls through the maze.</p>
-        <p>Get <b>every ball</b> into the <span class="gold">golden hole</span>. Dark holes send a ball back to the start.</p>
+        <p>Get <b>every ball</b> into the <span class="gold">goal</span> in the far corner. Dark holes send a ball back to the start.</p>
         <button id="start" class="primary">Start</button>
-        <p class="small" id="note">Hold the phone the way you like — that becomes “level”. Sound on 🔊</p>
+        <p class="small">Look: <button id="theme2" class="link">Wooden board</button></p>
+        <p class="small" id="note">Hold the phone the way you like to roll the balls. Sound on 🔊</p>
       </div>
     </div>
     <div id="win" class="overlay hidden">

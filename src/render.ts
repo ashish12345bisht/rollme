@@ -1,12 +1,16 @@
 // Canvas renderer. A static layer (wood, holes, walls) is drawn once per layout; balls every frame.
 
 import { PHYS, type Ball, type World } from "./physics";
+import { drawGlass, drawToy, TOY_FRAME } from "./toy";
+
+export type Theme = "wood" | "toy";
 
 const FRAME = 0.4; // wooden frame around the maze, in cells
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
   private layer = document.createElement("canvas");
+  private glass = document.createElement("canvas");
   private dpr = 1;
   private W = 0;
   private H = 0;
@@ -14,6 +18,7 @@ export class Renderer {
   private ox = 0;
   private oy = 0;
   private world?: World;
+  theme: Theme = "wood";
 
   constructor(private canvas: HTMLCanvasElement) {
     this.ctx = canvas.getContext("2d")!;
@@ -24,12 +29,17 @@ export class Renderer {
     this.dpr = Math.min(devicePixelRatio || 1, 2.5);
     this.W = r.width;
     this.H = r.height;
-    for (const c of [this.canvas, this.layer]) {
+    for (const c of [this.canvas, this.layer, this.glass]) {
       c.width = Math.round(r.width * this.dpr);
       c.height = Math.round(r.height * this.dpr);
     }
     this.canvas.style.width = `${r.width}px`;
     this.canvas.style.height = `${r.height}px`;
+    if (this.world) this.layout();
+  }
+
+  setTheme(t: Theme) {
+    this.theme = t;
     if (this.world) this.layout();
   }
 
@@ -41,9 +51,12 @@ export class Renderer {
   private layout() {
     const { cols, rows } = this.world!.level.maze;
     const pad = 10;
-    this.cell = Math.min((this.W - 2 * pad) / (cols + 2 * FRAME), (this.H - 2 * pad) / (rows + 2 * FRAME));
+    const f = this.theme === "toy" ? TOY_FRAME : FRAME;
+    // The toy's clasp tab hangs below the case: leave a little extra room at the bottom.
+    const extra = this.theme === "toy" ? 0.35 : 0;
+    this.cell = Math.min((this.W - 2 * pad) / (cols + 2 * f), (this.H - 2 * pad) / (rows + 2 * f + extra));
     this.ox = (this.W - cols * this.cell) / 2;
-    this.oy = (this.H - rows * this.cell) / 2;
+    this.oy = (this.H - rows * this.cell) / 2 - (extra * this.cell) / 2;
     this.drawStatic();
   }
 
@@ -57,6 +70,15 @@ export class Renderer {
     const k = this.cell;
     c.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     c.clearRect(0, 0, this.W, this.H);
+    if (this.theme === "toy") {
+      const geo = { ox: this.ox, oy: this.oy, k, world: w };
+      drawToy(c, geo);
+      const gc = this.glass.getContext("2d")!;
+      gc.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      gc.clearRect(0, 0, this.W, this.H);
+      drawGlass(gc, geo);
+      return;
+    }
 
     // Outer frame (darker wood) with a soft drop shadow.
     const fx = this.X(-FRAME), fy = this.Y(-FRAME), fw = (cols + 2 * FRAME) * k, fh = (rows + 2 * FRAME) * k;
@@ -199,7 +221,7 @@ export class Renderer {
       const hy = g.y + 0.5 + Math.sin(ang) * off;
       const x = b.tx + (hx - b.tx) * settle;
       const y = b.ty + (hy - b.ty) * settle;
-      chrome(c, this.X(x), this.Y(y), R * k * (1 - 0.45 * settle), 0.35 * settle);
+      chrome(c, this.X(x), this.Y(y), R * k * (1 - 0.45 * settle), 0.35 * settle, this.reflect());
     }
     for (const b of balls) {
       if (b.state === "fall") this.falling(b);
@@ -209,12 +231,21 @@ export class Renderer {
       const x = this.X(b.x), y = this.Y(b.y), r = R * k;
       c.beginPath();
       c.ellipse(x + r * 0.18, y + r * 0.28, r * 0.95, r * 0.85, 0, 0, Math.PI * 2);
-      c.fillStyle = "rgba(40,18,0,0.32)";
+      c.fillStyle = this.theme === "toy" ? "rgba(0,0,30,0.35)" : "rgba(40,18,0,0.32)";
       c.fill();
     }
     for (const b of balls) {
-      if (b.state === "roll") chrome(c, this.X(b.x), this.Y(b.y), R * this.cell, 0);
+      if (b.state === "roll") chrome(c, this.X(b.x), this.Y(b.y), R * this.cell, 0, this.reflect());
     }
+    if (this.theme === "toy") {
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.drawImage(this.glass, 0, 0);
+    }
+  }
+
+  /** Colour the floor reflects into the bottom of each ball. */
+  private reflect() {
+    return this.theme === "toy" ? "200,225,255" : "230,180,120";
   }
 
   private falling(b: Ball) {
@@ -222,12 +253,12 @@ export class Renderer {
     const e = p * p;
     const x = b.x + (b.tx - b.x) * Math.min(1, p * 2);
     const y = b.y + (b.ty - b.y) * Math.min(1, p * 2);
-    chrome(this.ctx, this.X(x), this.Y(y), PHYS.ballRadius * this.cell * (1 - 0.6 * e), 0.85 * e);
+    chrome(this.ctx, this.X(x), this.Y(y), PHYS.ballRadius * this.cell * (1 - 0.6 * e), 0.85 * e, this.reflect());
   }
 }
 
 /** Polished steel ball: bright key light top-left, dark horizon band, warm reflection of the wood below. */
-function chrome(c: CanvasRenderingContext2D, x: number, y: number, r: number, dark: number) {
+function chrome(c: CanvasRenderingContext2D, x: number, y: number, r: number, dark: number, floor: string) {
   if (r <= 0.5) return;
   const g = c.createRadialGradient(x - r * 0.38, y - r * 0.42, r * 0.04, x, y, r);
   g.addColorStop(0, "#ffffff");
@@ -248,8 +279,8 @@ function chrome(c: CanvasRenderingContext2D, x: number, y: number, r: number, da
   c.fill();
   // Warm board reflected in the bottom of the sphere.
   const w = c.createLinearGradient(x, y + r * 0.2, x, y + r);
-  w.addColorStop(0, "rgba(230,180,120,0)");
-  w.addColorStop(1, "rgba(230,180,120,0.55)");
+  w.addColorStop(0, `rgba(${floor},0)`);
+  w.addColorStop(1, `rgba(${floor},0.55)`);
   c.fillStyle = w;
   c.fillRect(x - r, y + r * 0.2, r * 2, r * 0.8);
   if (dark > 0) {

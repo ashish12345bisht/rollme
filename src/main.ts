@@ -3,7 +3,7 @@ import { Sfx } from "./audio";
 import { Tilt } from "./input";
 import { buildLevel, levelParams } from "./maze";
 import { allHome, createWorld, speedOf, step, type PhysEvent, type World } from "./physics";
-import { Renderer } from "./render";
+import { Renderer, type Theme } from "./render";
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const store = {
@@ -35,6 +35,23 @@ let playing = false;
 let won = false;
 
 sfx.muted = store.get("rollme:muted", "0") === "1";
+
+const THEME_NAMES: Record<Theme, string> = { wood: "Wooden board", toy: "Geometry box" };
+function applyTheme(t: Theme) {
+  document.body.dataset.theme = t;
+  renderer.setTheme(t);
+  sfx.material = t === "toy" ? "plastic" : "wood";
+  $("theme2").textContent = THEME_NAMES[t];
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", t === "toy" ? "#121a2b" : "#1d140e");
+  store.set("rollme:theme", t);
+}
+function toggleTheme() {
+  const next: Theme = renderer.theme === "wood" ? "toy" : "wood";
+  applyTheme(next);
+  return next;
+}
+$("theme").addEventListener("click", () => toast(`${THEME_NAMES[toggleTheme()]} look`, 1500));
+$("theme2").addEventListener("click", () => toggleTheme());
 $("mute").classList.toggle("off", sfx.muted);
 
 function aspect() {
@@ -184,5 +201,6 @@ $("mute").addEventListener("click", () => {
 
 new ResizeObserver(() => renderer.resize()).observe(stage);
 renderer.resize();
+applyTheme(store.get("rollme:theme", "wood") === "toy" ? "toy" : "wood");
 startLevel(true);
 requestAnimationFrame(frame);

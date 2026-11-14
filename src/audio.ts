@@ -18,6 +18,8 @@ export class Sfx {
   private noise!: AudioBuffer;
   private rolls: Roll[] = [];
   muted = false;
+  /** What the walls are made of: changes the knock sound. */
+  material: "wood" | "plastic" = "wood";
 
   /** Must be called from a user gesture (tap) — browsers block audio before that. */
   unlock() {
@@ -105,7 +107,9 @@ export class Sfx {
     // Random flutter = the grain of the wood under the ball.
     const grain = 0.7 + Math.random() * 0.6;
     r.out.gain.setTargetAtTime(level * 0.32 * grain, t, 0.03);
-    r.low.frequency.setTargetAtTime(160 + speed * 55, t, 0.05);
+    // On a printed card under plastic the rumble is thinner and brighter than on wood.
+    const lift = this.material === "plastic" ? 1.6 : 1;
+    r.low.frequency.setTargetAtTime((160 + speed * 55) * lift, t, 0.05);
     r.mid.frequency.setTargetAtTime(700 + speed * 90, t, 0.05);
   }
 
@@ -212,6 +216,13 @@ export class Sfx {
   wallHit(speed: number) {
     if (!this.ok()) return;
     const s = Math.min(1, speed / 8);
+    if (this.material === "plastic") {
+      // Hollow plastic tick: short, bright, a small boxy body.
+      this.thock(420 + Math.random() * 60, 0.3 * s, 0.05);
+      this.click(0.45 * s, 3200 + Math.random() * 800, 0, 0.015);
+      this.tink(2600 * (0.95 + Math.random() * 0.1), 0.07 * s, 0.25);
+      return;
+    }
     this.thock(150 + Math.random() * 30, 0.55 * s, 0.09);
     this.click(0.4 * s, 1500 + Math.random() * 500);
     this.tink(2300 * (0.95 + Math.random() * 0.1), 0.09 * s, 0.35);

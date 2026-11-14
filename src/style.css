@@ -51,12 +51,12 @@ body {
 #tray {
   flex: 1;
   display: flex;
-  gap: 5px;
+  gap: 4px;
   justify-content: center;
 }
 #tray i {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: 1.5px solid rgba(232, 184, 74, 0.55);
   transition: background 0.3s, transform 0.3s;
@@ -69,11 +69,11 @@ body {
 
 .btns {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 .btns button {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: 0;
   background: var(--btn);
@@ -193,6 +193,32 @@ button.primary {
 button.primary:active {
   transform: translateY(3px);
   box-shadow: 0 1px 0 #7b5618, 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+button.link {
+  font: inherit;
+  color: var(--gold);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Geometry-box look: cooler desk-blue surroundings. */
+body[data-theme="toy"] {
+  --bg: #121a2b;
+  --gold: #ffd54a;
+  background: radial-gradient(ellipse at 50% 30%, #24375a, var(--bg) 70%);
+}
+body[data-theme="toy"] .card {
+  background: linear-gradient(160deg, #263a5e, #172440);
+  border-color: rgba(255, 213, 74, 0.3);
+}
+body[data-theme="toy"] .level,
+body[data-theme="toy"] .card p {
+  color: #a9bbd8;
 }
 
 #toast {
